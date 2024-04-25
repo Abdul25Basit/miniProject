@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+
+        <div>
+            <h1>DFS</h1>
+            <pre>
+                <code>
+                    class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def dfs(root):
+    if not root:
+        return
+
+    stack = [root]
+
+    while stack:
+        node = stack.pop()
+        # Visit the current node
+        print(node.val)
+        # Push the right child onto the stack first to ensure left child is visited first (since stack is LIFO)
+        if node.right:
+            stack.append(node.right)
+        if node.left:
+            stack.append(node.left)
+
+# Example usage:
+# Constructing a binary tree
+#        1
+#       / \
+#      2   3
+#     / \
+#    4   5
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+root.left.left = TreeNode(4)
+root.left.right = TreeNode(5)
+
+print("DFS Traversal:")
+dfs(root)
+
+                </code>
+            </pre>
+        </div>
+
+        <pre>
+
+            <h1>Min Max</h1>
+            <div>
+                <code>
+                    
+import math
+ 
+def minimax (curDepth, nodeIndex,
+             maxTurn, scores, 
+             targetDepth):
+ 
+    
+    if (curDepth == targetDepth): 
+        return scores[nodeIndex]
+     
+    if (maxTurn):
+        return max(minimax(curDepth + 1, nodeIndex * 2, 
+                    False, scores, targetDepth), 
+                   minimax(curDepth + 1, nodeIndex * 2 + 1, 
+                    False, scores, targetDepth))
+     
+    else:
+        return min(minimax(curDepth + 1, nodeIndex * 2, 
+                     True, scores, targetDepth), 
+                   minimax(curDepth + 1, nodeIndex * 2 + 1, 
+                     True, scores, targetDepth))
+     
+
+scores = [3, 5, 2, 9, 12, 5, 23, 23]
+ 
+treeDepth = math.log(len(scores), 2)
+ 
+print("The optimal value is : ", end = "")
+print(minimax(0, 0, True, scores, treeDepth))
+ 
+# OUTPUT :
+# The optimal value is : 12 
+
+                </code>
+            </div>
+
+        </pre>
+
+        <pre>
+            <h1>A Star</h1>
+            <div>
+                <code>
+                    import heapq
+
+class TreeNode:
+    def __init__(self, state, parent=None, cost=0, heuristic=0):
+        self.state = state
+        self.parent = parent
+        self.cost = cost  # Cost from the start node to this node
+        self.heuristic = heuristic  # Heuristic estimated cost from this node to the goal
+
+    def __lt__(self, other):
+        # Comparison method for heap queue
+        return (self.cost + self.heuristic) < (other.cost + other.heuristic)
+
+def astar_search(root, goal_state, heuristic_fn):
+    # Priority queue to store nodes to be explored
+    open_list = []
+    heapq.heappush(open_list, root)
+
+    while open_list:
+        current_node = heapq.heappop(open_list)
+
+        if current_node.state == goal_state:
+            # Goal state found, reconstruct and return the path
+            return construct_path(current_node)
+
+        # Expand current node
+        for child_state, cost in expand_node(current_node.state):
+            child_heuristic = heuristic_fn(child_state, goal_state)
+            child_node = TreeNode(child_state, current_node, current_node.cost + cost, child_heuristic)
+            heapq.heappush(open_list, child_node)
+
+    # If goal not found, return None
+    return None
+
+def expand_node(state):
+    # Simulate expanding the current state to generate child states
+    # For simplicity, let's assume each state has two child states
+    return [(state + 1, 1), (state * 2, 2)]  # (child_state, cost)
+
+def heuristic_fn(state, goal_state):
+    # A simple heuristic function: estimate the distance from the current state to the goal state
+    return abs(goal_state - state)
+
+def construct_path(node):
+    # Reconstruct the path from the goal node to the root
+    path = []
+    while node:
+        path.append(node.state)
+        node = node.parent
+    return path[::-1]  # Reverse the path to start from the root
+
+# Example usage:
+root_state = 1  # Initial state
+goal_state = 10  # Goal state
+root_node = TreeNode(root_state)
+path = astar_search(root_node, goal_state, heuristic_fn)
+print("Path found:", path)
+
+                </code>
+            </div>
+        </pre>
+
+        <pre>
+            <h1>BFS</h1>
+            <div>
+                <code>
+                    class TreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+def bfs(root):
+    if not root:
+        return
+    
+    queue = [root]  # Use a queue to perform BFS
+    while queue:
+        node = queue.pop(0)  # Dequeue the first node
+        print(node.value, end=' ')  # Process the node
+        if node.left:
+            queue.append(node.left)  # Enqueue left child
+        if node.right:
+            queue.append(node.right)  # Enqueue right child
+
+# Example tree:
+#        1
+#       / \
+#      2   3
+#     / \   \
+#    4   5   6
+#           /
+#          7
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+root.left.left = TreeNode(4)
+root.left.right = TreeNode(5)
+root.right.right = TreeNode(6)
+root.right.right.left = TreeNode(7)
+
+print("BFS traversal of the tree:")
+bfs(root)
+
+                </code>
+            </div>
+        </pre>
+
+        <pre>
+            <h1>Alpha Beta</h1>
+            <div>
+                <code>
+                    
+MAX, MIN = 1000, -1000
+
+def minimax(depth, nodeIndex, maximizingPlayer, values, alpha, beta):
+    if depth == 3:
+        print(f"Leaf reached: Depth {depth}, Node {nodeIndex}, Value {values[nodeIndex]}")
+        return values[nodeIndex]
+
+    if maximizingPlayer:
+        print(f"Maximizing player at Depth {depth}, Node {nodeIndex}, Alpha {alpha}, Beta {beta}")
+        best = MIN
+        for i in range(0, 2):
+            val = minimax(depth + 1, nodeIndex * 2 + i, False, values, alpha, beta)
+            best = max(best, val)
+            alpha = max(alpha, best)
+            print(f"At Depth {depth}, Node {nodeIndex}, Alpha {alpha}, Beta {beta}, Best {best}")
+            if beta <= alpha:
+                print("Pruned")
+                break
+        return best
+
+    else:
+        print(f"Minimizing player at Depth {depth}, Node {nodeIndex}, Alpha {alpha}, Beta {beta}")
+        best = MAX
+        for i in range(0, 2):
+            val = minimax(depth + 1, nodeIndex * 2 + i, True, values, alpha, beta)
+            best = min(best, val)
+            beta = min(beta, best)
+            print(f"At Depth {depth}, Node {nodeIndex}, Alpha {alpha}, Beta {beta}, Best {best}")
+            if beta <= alpha:
+                print("Pruned")
+                break
+        return best
+
+if __name__ == "__main__":
+    values = [3, 5, 6, 9, 1, 2, 0, -1]
+    print("The optimal value is :", minimax(0, 0, True, values, MIN, MAX))
+
+
+
+'''
+Output: 
+ 
+Maximizing player at Depth 0, Node 0, Alpha -1000, Beta 1000
+
+Minimizing player at Depth 1, Node 0, Alpha -1000, Beta 1000
+
+Maximizing player at Depth 2, Node 0, Alpha -1000, Beta 1000
+
+Leaf reached: Depth 3, Node 0, Value 3
+
+At Depth 2, Node 0, Alpha 3, Beta 1000, Best 3
+
+Leaf reached: Depth 3, Node 1, Value 5
+
+At Depth 2, Node 0, Alpha 5, Beta 1000, Best 5
+
+At Depth 1, Node 0, Alpha -1000, Beta 5, Best 5
+
+Maximizing player at Depth 2, Node 1, Alpha -1000, Beta 5   
+
+Leaf reached: Depth 3, Node 2, Value 6
+
+At Depth 2, Node 1, Alpha 6, Beta 5, Best 6
+
+Pruned
+
+At Depth 1, Node 0, Alpha -1000, Beta 5, Best 5
+
+At Depth 0, Node 0, Alpha 5, Beta 1000, Best 5
+
+Minimizing player at Depth 1, Node 1, Alpha 5, Beta 1000
+
+Maximizing player at Depth 2, Node 2, Alpha 5, Beta 1000
+
+Leaf reached: Depth 3, Node 4, Value 1
+
+At Depth 2, Node 2, Alpha 5, Beta 1000, Best 1
+
+Leaf reached: Depth 3, Node 5, Value 2
+
+At Depth 2, Node 2, Alpha 5, Beta 1000, Best 2
+
+At Depth 1, Node 1, Alpha 5, Beta 2, Best 2
+
+Pruned
+
+At Depth 0, Node 0, Alpha 5, Beta 1000, Best 5
+
+The optimal value is : 5
+
+'''
+                </code>
+            </div>
+        </div>
+
+
+    </div>
+</body>
+</html>
