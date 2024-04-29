@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code optimization</title>
+</head>
+<body>
+    <div>
+        <div>
+            <h1>Exp_7.java</h1>
+            <pre>
+                // Implementation of Code Optimization.
+
+import java.io.*;
+import java.util.*;
+
+class Exp_7 {
+  public static void main(String args[]) throws IOException {
+    String s, temp;
+    String arr[][] = new String[10][2]; // assuming 10 unique operations with LHS and RHS stored
+    int flag = 0, index = 0;
+    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("input.txt")));
+    File op = new File("output.txt");
+    if (!op.exists())
+      op.createNewFile();
+    BufferedWriter output = new BufferedWriter(new FileWriter(op.getAbsoluteFile()));
+    for (; (s = br.readLine()) != null; flag = 0) {
+      temp = s.substring(s.indexOf("=") + 1);
+      for (int i = 0; i < index; i++) {
+        if (temp.equals(arr[i][1])) {
+          flag = 1;
+          break;
+        } else if (temp.contains(arr[i][1]))
+          s = s.replaceAll(arr[i][1], arr[i][0]);
+      }
+      if (flag == 0) {
+        arr[index][0] = s.substring(0, s.indexOf("="));
+        arr[index][1] = temp;
+        index++;
+        output.write(s);
+        output.newLine();
+      }
+    }
+    output.close();
+  }
+}
+
+            </pre>
+        </div>
+
+        <div>
+            <h1>input.txt</h1>
+            <pre>
+                temp1=a-b
+temp2=a-b+c
+temp3=d-e
+temp4=c
+temp5=d-e
+
+            </pre>
+        </div>
+
+        <div>
+            <h1>output.txt</h1>
+            <pre>
+                temp1=a-b
+temp2=temp1+c
+temp3=d-e
+temp4=c
+
+            </pre>
+        </div>
+    </div>
+</body>
+</html>
